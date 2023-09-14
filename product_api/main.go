@@ -8,15 +8,19 @@ import (
 )
 
 func main() {
+
 	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
 		log.Print("Home")
+
 		data, err := ioutil.ReadAll(r.Body)
+		log.Printf("Data %s", data)
+
 		if err != nil {
 			w.WriteHeader(http.StatusBadRequest)
 			w.Write([]byte("Oops"))
 			return
 		}
-		fmt.Fprint(w, "Hello %s", data)
+		fmt.Fprintf(w, "Hello %s\n", data)
 
 	})
 
