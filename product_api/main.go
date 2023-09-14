@@ -16,8 +16,9 @@ func main() {
 		log.Printf("Data %s", data)
 
 		if err != nil {
-			w.WriteHeader(http.StatusBadRequest)
-			w.Write([]byte("Oops"))
+			// w.WriteHeader(http.StatusBadRequest)
+			// w.Write([]byte("Oops"))
+			http.Error(w, "Ooopss", http.StatusBadRequest)
 			return
 		}
 		fmt.Fprintf(w, "Hello %s\n", data)
