@@ -1,10 +1,12 @@
 package main
 
 import (
+	"context"
 	"github.com/mohibul75/microservice-with-go/handlers"
 	"log"
 	"net/http"
 	"os"
+	"os/signal"
 	"time"
 )
 
@@ -27,5 +29,20 @@ func main() {
 		WriteTimeout: 1 * time.Second,
 	}
 
-	server.ListenAndServe()
+	go func() {
+		err := server.ListenAndServe()
+		if err != nil {
+			l.Fatal(err)
+		}
+	}()
+
+	sigChannel := make(chan os.Signal)
+	signal.Notify(sigChannel, os.Interrupt)
+	signal.Notify(sigChannel, os.Kill)
+
+	sig := <-sigChannel
+	l.Print("Shutdown is called gracefully	", sig)
+
+	tx, _ := context.WithTimeout(context.Background(), 30*time.Second)
+	server.Shutdown(tx)
 }
