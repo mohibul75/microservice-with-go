@@ -10,13 +10,13 @@ import (
 func main() {
 
 	l := log.New(os.Stdout, "product-api", log.LstdFlags)
-	homeHandler := handlers.NewHome(l)
 	surveMux := http.NewServeMux()
-	surveMux.Handle("/", homeHandler)
 
-	//http.HandleFunc("/bye", func(w http.ResponseWriter, r *http.Request) {
-	//	log.Print("Bye")
-	//})
+	homeHandler := handlers.NewHome(l)
+	dashboardHanlder := handlers.NewDashboard(l)
+
+	surveMux.Handle("/", homeHandler)
+	surveMux.Handle("/dashboard", dashboardHanlder)
 
 	http.ListenAndServe(":4000", surveMux)
 }
