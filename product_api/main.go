@@ -1,33 +1,22 @@
 package main
 
 import (
-	"fmt"
-	"io/ioutil"
+	"github.com/mohibul75/microservice-with-go/handlers"
 	"log"
 	"net/http"
+	"os"
 )
 
 func main() {
 
-	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
-		log.Print("Home")
+	l := log.New(os.Stdout, "product-api", log.LstdFlags)
+	homeHandler := handlers.NewHome(l)
+	surveMux := http.NewServeMux()
+	surveMux.Handle("/", homeHandler)
 
-		data, err := ioutil.ReadAll(r.Body)
-		log.Printf("Data %s", data)
+	//http.HandleFunc("/bye", func(w http.ResponseWriter, r *http.Request) {
+	//	log.Print("Bye")
+	//})
 
-		if err != nil {
-			// w.WriteHeader(http.StatusBadRequest)
-			// w.Write([]byte("Oops"))
-			http.Error(w, "Ooopss", http.StatusBadRequest)
-			return
-		}
-		fmt.Fprintf(w, "Hello %s\n", data)
-
-	})
-
-	http.HandleFunc("/bye", func(w http.ResponseWriter, r *http.Request) {
-		log.Print("Bye")
-	})
-
-	http.ListenAndServe(":4000", nil)
+	http.ListenAndServe(":4000", surveMux)
 }
