@@ -5,6 +5,7 @@ import (
 	"log"
 	"net/http"
 	"os"
+	"time"
 )
 
 func main() {
@@ -18,5 +19,13 @@ func main() {
 	surveMux.Handle("/", homeHandler)
 	surveMux.Handle("/dashboard", dashboardHanlder)
 
-	http.ListenAndServe(":4000", surveMux)
+	server := http.Server{
+		Addr:         ":4000",
+		Handler:      surveMux,
+		IdleTimeout:  120 * time.Second,
+		ReadTimeout:  1 * time.Second,
+		WriteTimeout: 1 * time.Second,
+	}
+
+	server.ListenAndServe()
 }
