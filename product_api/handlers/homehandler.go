@@ -17,16 +17,13 @@ func NewHome(l *log.Logger) *Home {
 
 func (home *Home) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	home.l.Print("Home")
-
 	data, err := ioutil.ReadAll(r.Body)
-	home.l.Printf("Recieved Data %s", data)
-
 	if err != nil {
-		// w.WriteHeader(http.StatusBadRequest)
-		// w.Write([]byte("Oops"))
 		home.l.Print("Error Reading Request Data")
 		http.Error(w, "Unable to read request body", http.StatusBadRequest)
 		return
 	}
+
+	home.l.Printf("Recieved Data %s", data)
 	fmt.Fprintf(w, "Hello %s\n", data)
 }
