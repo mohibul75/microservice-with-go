@@ -17,11 +17,11 @@ func main() {
 
 	homeHandler := handlers.NewHome(l)
 	dashboardHanlder := handlers.NewDashboard(l)
-	productsAPI := handlers.NewGetProduct(l)
+	productsHandler := handlers.NewGetProduct(l)
 
 	surveMux.Handle("/", homeHandler)
 	surveMux.Handle("/dashboard", dashboardHanlder)
-	surveMux.Handle("/getproducts", productsAPI)
+	surveMux.Handle("/getproducts", productsHandler)
 
 	server := http.Server{
 		Addr:         ":4000",
