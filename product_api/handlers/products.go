@@ -1,7 +1,6 @@
 package handlers
 
 import (
-	"encoding/json"
 	"github.com/mohibul75/microservice-with-go/data"
 	"log"
 	"net/http"
@@ -18,10 +17,8 @@ func NewGetProduct(l *log.Logger) *GetProduct {
 func (getProduct *GetProduct) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	getProduct.l.Println("get product api ")
 	products := data.GetProducts()
-	data, err := json.Marshal(products)
+	err := products.ToJSON(w)
 	if err != nil {
 		http.Error(w, "Unable to marshal product", http.StatusBadRequest)
 	}
-
-	w.Write(data)
 }
