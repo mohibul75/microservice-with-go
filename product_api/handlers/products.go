@@ -4,6 +4,8 @@ import (
 	"github.com/mohibul75/microservice-with-go/data"
 	"log"
 	"net/http"
+	"regexp"
+	"strconv"
 )
 
 type GetProduct struct {
@@ -23,6 +25,30 @@ func (p *GetProduct) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	if r.Method == http.MethodPost {
 		p.addProduct(w, r)
 		return
+	}
+
+	if r.Method == http.MethodPut {
+		reg := regexp.MustCompile(`/([0-9]+)`)
+		g := reg.FindAllStringSubmatch(r.URL.Path, -1)
+
+		if len(g) != 1 {
+			http.Error(w, "Invalid URL", http.StatusBadRequest)
+			return
+		}
+
+		if len(g[0]) != 2 {
+			http.Error(w, "Invalid URL", http.StatusBadRequest)
+			return
+		}
+
+		idString := g[0][1]
+		id, err := strconv.Atoi(idString)
+		if err != nil {
+			http.Error(w, "Invalid URL", http.StatusBadRequest)
+			return
+		}
+
+		p.l.Printf("Id in URL : %s", id)
 	}
 
 	w.WriteHeader(http.StatusNotImplemented)

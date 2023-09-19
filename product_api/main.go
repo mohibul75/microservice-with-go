@@ -12,7 +12,7 @@ import (
 
 func main() {
 
-	l := log.New(os.Stdout, "product-api", log.LstdFlags)
+	l := log.New(os.Stdout, "product-api	:	", log.LstdFlags)
 	surveMux := http.NewServeMux()
 
 	homeHandler := handlers.NewHome(l)
@@ -32,6 +32,8 @@ func main() {
 	}
 
 	go func() {
+		l.Println("Server started at port 4000")
+
 		err := server.ListenAndServe()
 		if err != nil {
 			l.Fatal(err)
