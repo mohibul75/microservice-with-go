@@ -16,16 +16,18 @@ func main() {
 	l := log.New(os.Stdout, "product-api	:	", log.LstdFlags)
 	surveMux := mux.NewRouter()
 
-	productsHandler := handlers.NewGetProduct(l)
+	productsHandler := handlers.NewProduct(l)
 
 	getRouter := surveMux.Methods(http.MethodGet).Subrouter()
 	getRouter.HandleFunc("/getproducts", productsHandler.GetProucts)
 
 	addRouter := surveMux.Methods(http.MethodPost).Subrouter()
 	addRouter.HandleFunc("/addproduct", productsHandler.AddProduct)
+	addRouter.Use(productsHandler.MiddlewareValidateProduct)
 
 	updateRouter := surveMux.Methods(http.MethodPut).Subrouter()
 	updateRouter.HandleFunc("/updateproduct/{id:[0-9]+}", productsHandler.UpdateProduct)
+	addRouter.Use(productsHandler.MiddlewareValidateProduct)
 
 	server := http.Server{
 		Addr:         ":4000",
