@@ -50,7 +50,7 @@ func (p *GetProduct) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 
 		p.updateProduct(id, w, r)
 	}
-	p.l.Println("Method Type %s ", r.Method)
+	p.l.Printf("Method Type : %s ", r.Method)
 	w.WriteHeader(http.StatusNotImplemented)
 }
 
