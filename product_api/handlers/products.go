@@ -48,9 +48,9 @@ func (p *GetProduct) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 
-		p.l.Printf("Id in URL : %s", id)
+		p.updateProduct(id, w, r)
 	}
-
+	p.l.Println("Method Type %s ", r.Method)
 	w.WriteHeader(http.StatusNotImplemented)
 }
 
@@ -72,4 +72,18 @@ func (p *GetProduct) addProduct(w http.ResponseWriter, r *http.Request) {
 	}
 
 	data.AddProduct(product)
+}
+
+func (p *GetProduct) updateProduct(id int, w http.ResponseWriter, r *http.Request) {
+	p.l.Println("Update product api")
+	product := &data.Product{}
+	err := product.FromJSON(r.Body)
+	if err != nil {
+		http.Error(w, "Update product Failed", http.StatusBadRequest)
+	}
+
+	err = data.UpdateProduct(id, product)
+	if err != nil {
+		http.Error(w, "Update Product Failed", http.StatusBadRequest)
+	}
 }

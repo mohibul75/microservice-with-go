@@ -15,13 +15,13 @@ func main() {
 	l := log.New(os.Stdout, "product-api	:	", log.LstdFlags)
 	surveMux := http.NewServeMux()
 
-	homeHandler := handlers.NewHome(l)
+	// homeHandler := handlers.NewHome(l)
 	dashboardHanlder := handlers.NewDashboard(l)
 	productsHandler := handlers.NewGetProduct(l)
 
-	surveMux.Handle("/", homeHandler)
+	// surveMux.Handle("/", homeHandler)
 	surveMux.Handle("/dashboard", dashboardHanlder)
-	surveMux.Handle("/getproducts", productsHandler)
+	surveMux.Handle("/", productsHandler)
 
 	server := http.Server{
 		Addr:         ":4000",
