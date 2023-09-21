@@ -2,6 +2,7 @@ package handlers
 
 import (
 	"context"
+	"fmt"
 	"github.com/gorilla/mux"
 	"github.com/mohibul75/microservice-with-go/data"
 	"log"
@@ -60,6 +61,17 @@ func (p *Product) MiddlewareValidateProduct(next http.Handler) http.Handler {
 		if err != nil {
 			p.l.Println("[ERROR]	deserializing product", err)
 			http.Error(w, "Error on reading product ", http.StatusBadRequest)
+			return
+		}
+
+		err = prod.Validate()
+		if err != nil {
+			p.l.Println("[ERROR] Product validation Failed", err)
+			http.Error(
+				w,
+				fmt.Sprintf("Product Validation Falied : %s", err),
+				http.StatusBadRequest,
+			)
 			return
 		}
 
