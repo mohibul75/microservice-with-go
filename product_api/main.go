@@ -2,6 +2,7 @@ package main
 
 import (
 	"context"
+	"github.com/gorilla/mux"
 	"github.com/mohibul75/microservice-with-go/handlers"
 	"log"
 	"net/http"
@@ -13,15 +14,20 @@ import (
 func main() {
 
 	l := log.New(os.Stdout, "product-api	:	", log.LstdFlags)
-	surveMux := http.NewServeMux()
+	surveMux := mux.NewRouter()
 
-	// homeHandler := handlers.NewHome(l)
-	dashboardHanlder := handlers.NewDashboard(l)
-	productsHandler := handlers.NewGetProduct(l)
+	productsHandler := handlers.NewProduct(l)
 
-	// surveMux.Handle("/", homeHandler)
-	surveMux.Handle("/dashboard", dashboardHanlder)
-	surveMux.Handle("/", productsHandler)
+	getRouter := surveMux.Methods(http.MethodGet).Subrouter()
+	getRouter.HandleFunc("/getproducts", productsHandler.GetProucts)
+
+	addRouter := surveMux.Methods(http.MethodPost).Subrouter()
+	addRouter.HandleFunc("/addproduct", productsHandler.AddProduct)
+	addRouter.Use(productsHandler.MiddlewareValidateProduct)
+
+	updateRouter := surveMux.Methods(http.MethodPut).Subrouter()
+	updateRouter.HandleFunc("/updateproduct/{id:[0-9]+}", productsHandler.UpdateProduct)
+	addRouter.Use(productsHandler.MiddlewareValidateProduct)
 
 	server := http.Server{
 		Addr:         ":4000",
