@@ -29,6 +29,9 @@ func main() {
 	updateRouter.HandleFunc("/updateproduct/{id:[0-9]+}", productsHandler.UpdateProduct)
 	addRouter.Use(productsHandler.MiddlewareValidateProduct)
 
+	deleteRouter := surveMux.Methods(http.MethodDelete).Subrouter()
+	deleteRouter.HandleFunc("/deleteproduct/{id:[0-9]+}", productsHandler.DeleteProduct)
+
 	server := http.Server{
 		Addr:         ":4000",
 		Handler:      surveMux,

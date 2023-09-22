@@ -22,6 +22,8 @@ type Product struct {
 
 type Products []*Product
 
+var ProductNotFoundError = fmt.Errorf("product not found")
+
 func (p *Product) Validate() error {
 	validator := validator.New()
 	validator.RegisterValidation("sku", validateSKU)
@@ -48,6 +50,31 @@ func (p *Product) FromJSON(reader io.Reader) error {
 	return e.Decode(p)
 }
 
+func findNextID() int {
+	lastProduct := productList[len(productList)-1]
+	return lastProduct.ID + 1
+}
+
+func findId(id int) (*Product, int, error) {
+	for i, p := range productList {
+		if p.ID == id {
+			return p, i, nil
+		}
+	}
+	return nil, -1, ProductNotFoundError
+}
+
+func findIndexByProduct(id int) int {
+	for i, p := range productList {
+
+		if p.ID == id {
+			return i
+		}
+	}
+
+	return -1
+}
+
 func GetProducts() Products {
 	return productList
 }
@@ -55,11 +82,6 @@ func GetProducts() Products {
 func AddProduct(p *Product) {
 	p.ID = findNextID()
 	productList = append(productList, p)
-}
-
-func findNextID() int {
-	lastProduct := productList[len(productList)-1]
-	return lastProduct.ID + 1
 }
 
 func UpdateProduct(id int, p *Product) error {
@@ -74,15 +96,14 @@ func UpdateProduct(id int, p *Product) error {
 	return nil
 }
 
-var ProductNotFoundError = fmt.Errorf("Product Not Found")
-
-func findId(id int) (*Product, int, error) {
-	for i, p := range productList {
-		if p.ID == id {
-			return p, i, nil
-		}
+func RemoveProduct(id int) error {
+	pos := findIndexByProduct(id)
+	if pos == -1 {
+		return ProductNotFoundError
 	}
-	return nil, -1, ProductNotFoundError
+
+	productList = append(productList[:pos], productList[pos+1])
+	return nil
 }
 
 var productList = []*Product{
